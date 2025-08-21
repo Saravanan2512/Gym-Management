@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Trainers</title>
+{% endblock %}
+
+{% block content %}
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Trainer List</h1>
+    <button id="toggleTrainerFormBtn"
+       class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow-md transition transform hover:scale-105">
+      + Add Trainer
+    </button>
+  </div>
+
+  <!-- Trainer Form (hidden by default) -->
+  <div id="trainerForm" class="hidden bg-white shadow-lg rounded-xl p-6 mb-8">
+    <h2 class="text-xl font-semibold mb-4 text-gray-700">Add / Edit Trainer</h2>
+    <form method="POST" action="{{ url_for('trainers.add_trainer') }}" enctype="multipart/form-data" class="space-y-4">
+      <input type="hidden" name="trainer_id" id="trainer_id">
+      <div>
+        <label class="block text-gray-600 mb-1">Name</label>
+        <input type="text" name="name" id="name" required class="w-full px-4 py-2 border rounded-lg">
+      </div>
+      <div>
+        <label class="block text-gray-600 mb-1">Experience (Years)</label>
+        <input type="number" name="experience" id="experience" min="0" required class="w-full px-4 py-2 border rounded-lg">
+      </div>
+      <div>
+        <label class="block text-gray-600 mb-1">Qualities / Skills</label>
+        <textarea name="qualities" id="qualities" rows="3" required class="w-full px-4 py-2 border rounded-lg"></textarea>
+      </div>
+      <div>
+        <label class="block text-gray-600 mb-1">Photo</label>
+        <input type="file" name="photo" id="photo" accept="image/*" class="w-full px-4 py-2 border rounded-lg">
+      </div>
+      <div>
+        <label class="block text-gray-600 mb-1">Batch Timing</label>
+        <select name="batch" id="batch" required class="w-full px-4 py-2 border rounded-lg">
+          <option value="">Select Batch</option>
+          <option value="Morning">Morning</option>
+          <option value="Evening">Evening</option>
+        </select>
+      </div>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg">
+        Save Trainer
+      </button>
+    </form>
+  </div>
+
+  <!-- Trainer List -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for trainer in trainers %}
+    <div class="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col">
+      <!-- Photo -->
+      <div class="w-full h-48">
+        {% if trainer.photo %}
+          <img src="{{ url_for('static', filename='uploads/trainers/' ~ trainer.photo) }}" alt="{{ trainer.name }}" class="object-cover w-full h-full">
+        {% else %}
+          <div class="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500">
+            No Photo
+          </div>
+        {% endif %}
+      </div>
+      <!-- Details -->
+      <div class="p-4 flex-1">
+        <h3 class="text-lg font-bold text-gray-800">{{ trainer.name }}</h3>
+        <p class="text-gray-600"><strong>Experience:</strong> {{ trainer.experience }} years</p>
+        <p class="text-gray-600"><strong>Batch:</strong> {{ trainer.batch }}</p>
+        <p class="text-gray-600"><strong>Qualities:</strong> {{ trainer.qualities }}</p>
+      </div>
+      <!-- Buttons -->
+      <div class="p-4 flex justify-between">
+        <button onclick="editTrainer({{ trainer.id }}, '{{ trainer.name }}', '{{ trainer.experience }}', '{{ trainer.qualities }}', '{{ trainer.batch }}')"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg">
+          Edit
+        </button>
+        <form method="POST" action="{{ url_for('trainers.delete_trainer', trainer_id=trainer.id) }}" onsubmit="return confirm('Are you sure you want to delete this trainer?');">
+          <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg">
+            Delete
+          </button>
+        </form>
+      </div>
+    </div>
+    {% else %}
+      <p class="col-span-3 text-center text-gray-500 italic">No trainers available</p>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+function editTrainer(id, name, experience, qualities, batch) {
+  document.getElementById('trainer_id').value = id;
+  document.getElementById('name').value = name;
+  document.getElementById('experience').value = experience;
+  document.getElementById('qualities').value = qualities;
+  document.getElementById('batch').value = batch;
+  document.getElementById('trainerForm').classList.remove('hidden');
+  document.getElementById('toggleTrainerFormBtn').innerText = '× Close';
+}
+
+// Toggle form for adding new trainer
+document.getElementById('toggleTrainerFormBtn').addEventListener('click', function () {
+  let form = document.getElementById('trainerForm');
+  form.classList.toggle('hidden');
+  this.innerText = form.classList.contains('hidden') ? '+ Add Trainer' : '× Close';
+});
+</script>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Packages</title>
+{% endblock %}
+
+{% block content %}
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Package List</h1>
+    
+    <div class="flex gap-2">
+      <!-- New Package Button -->
+      <button id="toggleFormBtn"
+         class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow-md transition transform hover:scale-105">
+        + New Package
+      </button>
+
+      <!-- Trainer Info Button -->
+      <a href="{{ url_for('trainers.list_trainers') }}"
+         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow-md transition transform hover:scale-105">
+        Trainer Info
+      </a>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="flex justify-between items-center mb-6">
+    <input 
+      type="text" 
+      placeholder="🔍 Search package..." 
+      class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition" 
+      id="searchInput"
+    >
+  </div>
+
+  <!-- Package Form (hidden by default) -->
+  <div id="packageForm" class="hidden bg-white shadow-lg rounded-xl p-6 mb-8">
+    <h2 class="text-xl font-semibold mb-4 text-gray-700">Add New Package</h2>
+    <form method="POST" action="{{ url_for('packages.add_package') }}" class="space-y-4">
+      <div>
+        <label class="block text-gray-600 mb-1">Package Name</label>
+        <input type="text" name="name" required
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition">
+      </div>
+      <div>
+        <label class="block text-gray-600 mb-1">Amount (₹)</label>
+        <input type="number" name="amount" required
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition">
+      </div>
+      <div>
+        <label class="block text-gray-600 mb-1">Description</label>
+        <textarea name="description"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"></textarea>
+      </div>
+      <div>
+        <label class="block text-gray-600 mb-1">Duration (Months)</label>
+        <input type="number" name="plan_duration" min="1" required
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
+               placeholder="Enter number of months">
+      </div>
+
+      <button type="submit"
+              class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md transition transform hover:scale-105">
+        Save Package
+      </button>
+    </form>
+  </div>
+
+  <!-- Package Table -->
+  <div class="overflow-x-auto bg-white shadow-lg rounded-xl">
+    <table class="min-w-full text-sm text-left">
+      <thead class="bg-gray-100 text-gray-700 text-sm uppercase tracking-wide">
+        <tr>
+          <th class="px-6 py-3">No.</th>
+          <th class="px-6 py-3">Package</th>
+          <th class="px-6 py-3">Plan (Months)</th>
+          <th class="px-6 py-3">Amount (₹)</th>
+          <th class="px-6 py-3">Action</th>
+        </tr>
+      </thead>
+      <tbody id="packageTable" class="divide-y divide-gray-200">
+        {% if packages %}
+          {% for package in packages %}
+          <tr class="odd:bg-white even:bg-gray-50 hover:bg-green-50 transition">
+            <td class="px-6 py-3 font-medium text-gray-800">{{ loop.index }}</td>
+            <td class="px-6 py-3">{{ package.name }}</td>
+            <td class="px-6 py-3">{{ package.plan_duration }}</td>
+            <td class="px-6 py-3">₹{{ package.amount }}</td>
+            <td class="px-6 py-3 flex gap-2">
+              <form action="{{ url_for('packages.delete_package', id=package.id) }}" method="POST" class="inline">
+                <button type="submit" 
+                        onclick="return confirm('Are you sure you want to delete this package?')" 
+                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm shadow transition transform hover:scale-105">
+                  Delete
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="5" class="px-6 py-6 text-center text-gray-500 italic">
+              No packages available
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Toggle Package Form
+  document.getElementById('toggleFormBtn').addEventListener('click', function () {
+    let form = document.getElementById('packageForm');
+    form.classList.toggle('hidden');
+    this.innerText = form.classList.contains('hidden') ? '+ New Package' : '× Close';
+  });
+
+  // Search Filter
+  document.getElementById('searchInput').addEventListener('keyup', function () {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll('#packageTable tr');
+
+    rows.forEach(row => {
+      let pkg = row.cells[1]?.innerText.toLowerCase();
+      row.style.display = pkg.includes(filter) ? '' : 'none';
+    });
+  });
+</script>
+{% endblock %}

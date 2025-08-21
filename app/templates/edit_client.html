@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Edit Client</title>
+{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <h1 class="text-3xl font-bold mb-6">Edit Client</h1>
+
+    <form action="{{ url_for('clients.edit_client', client_id=client.id) }}" method="POST" class="space-y-4">
+        <div>
+            <label for="first_name" class="block text-gray-700 font-bold mb-2">First Name</label>
+            <input type="text" name="first_name" id="first_name" value="{{ client.first_name }}" class="border border-gray-300 rounded px-4 py-2 w-full" required>
+        </div>
+
+        <div>
+            <label for="last_name" class="block text-gray-700 font-bold mb-2">Last Name</label>
+            <input type="text" name="last_name" id="last_name" value="{{ client.last_name }}" class="border border-gray-300 rounded px-4 py-2 w-full" required>
+        </div>
+
+        <div>
+            <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
+            <input type="email" name="email" id="email" value="{{ client.email }}" class="border border-gray-300 rounded px-4 py-2 w-full" required>
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update Client</button>
+    </form>
+</div>
+{% endblock %}

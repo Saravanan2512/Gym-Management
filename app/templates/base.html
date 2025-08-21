@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gym Management System</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  {% block head %}{% endblock %}
+  {% block styles %}{% endblock %}
+</head>
+<body class="bg-gray-100 min-h-screen flex font-sans text-gray-800">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col p-6 shadow-xl">
+    <!-- Logo / Brand -->
+    <div class="flex items-center gap-2 mb-10">
+      <span class="text-3xl font-bold text-green-400">💪</span>
+      <h2 class="text-2xl font-bold tracking-wide">GymAdmin</h2>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1">
+      <ul class="space-y-2">
+        <li>
+          <a href="{{ url_for('dashboard.home') }}" 
+             class="block py-2.5 px-4 rounded-lg transition hover:bg-gray-700 hover:text-green-400 {% if request.endpoint == 'dashboard.home' %}bg-gray-700 text-green-400{% endif %}">
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('clients.list_clients') }}" 
+             class="block py-2.5 px-4 rounded-lg transition hover:bg-gray-700 hover:text-green-400 {% if request.endpoint == 'clients.list_clients' %}bg-gray-700 text-green-400{% endif %}">
+            All Clients
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('clients.active_clients') }}" 
+             class="block py-2.5 px-4 rounded-lg transition hover:bg-gray-700 hover:text-green-400 {% if request.endpoint == 'clients.active_clients' %}bg-gray-700 text-green-400{% endif %}">
+            Active Clients
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('clients.inactive_clients') }}" 
+             class="block py-2.5 px-4 rounded-lg transition hover:bg-gray-700 hover:text-green-400 {% if request.endpoint == 'clients.inactive_clients' %}bg-gray-700 text-green-400{% endif %}">
+            Inactive Clients
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('packages.package_list') }}" 
+             class="block py-2.5 px-4 rounded-lg transition hover:bg-gray-700 hover:text-green-400 {% if request.endpoint == 'packages.package_list' %}bg-gray-700 text-green-400{% endif %}">
+            Packages
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer (Sidebar Bottom) -->
+    <div class="mt-auto text-xs text-gray-400 pt-6 border-t border-gray-700">
+      © 2025 GymAdmin
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col">
+    <!-- Topbar -->
+    <header class="flex items-center justify-between bg-white px-8 py-4 shadow-sm">
+      <h1 class="text-xl font-semibold">{% block page_title %}Dashboard{% endblock %}</h1>
+      <div class="flex items-center gap-2">
+        <span class="text-gray-600">Admin</span>
+        <img src="https://ui-avatars.com/api/?name=Admin&background=22c55e&color=fff" 
+             alt="User Avatar" class="w-9 h-9 rounded-full shadow-md">
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 p-8 bg-gray-50">
+      {% block actions %}{% endblock %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>
